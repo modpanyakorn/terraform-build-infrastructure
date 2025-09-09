@@ -58,14 +58,14 @@ resource "google_compute_firewall" "allow_user_to_http" {
   target_tags   = ["public"]
 }
 
-# Create firewall (allow frontend to backend via http)
-resource "google_compute_firewall" "allow_frontend_to_backend_via_http" {
-  name    = "${google_compute_network.dev_vpc.name}-allow-frontend-to-backend-via-http"
+# Create firewall (allow_frontend_access_backend)
+resource "google_compute_firewall" "allow_frontend_access_backend" {
+  name    = "${google_compute_network.dev_vpc.name}-allow-frontend-access-backend"
   network = google_compute_network.dev_vpc.name
 
   allow {
     protocol = "tcp"
-    ports    = ["80"]
+    ports    = ["80", "22"]
   }
   source_tags = ["public"]
   target_tags = ["private"]
@@ -87,10 +87,10 @@ resource "google_compute_instance" "frontend_vm" {
   network_interface {
     subnetwork = google_compute_subnetwork.public_subnet.name
     access_config { # Add public ip (Ephemeral public ip)
-
     }
   }
 }
+
 
 # Create backend vm in public-subnet
 resource "google_compute_instance" "backend_vm" {
@@ -109,3 +109,4 @@ resource "google_compute_instance" "backend_vm" {
     subnetwork = google_compute_subnetwork.private_subnet.name
   }
 }
+
